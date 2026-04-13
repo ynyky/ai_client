@@ -1,2 +1,2 @@
 attach/*
-!attach/dont_touch
+!.keep

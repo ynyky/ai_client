@@ -8,10 +8,11 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user first
-RUN useradd -m -u 10001 claude
-
+RUN useradd -m -u 1000 claude
+RUN mkdir /home/claude/workspace
+RUN chown -R claude:claude /home/claude/workspace
 USER claude
-WORKDIR /home/claude
+WORKDIR /home/claude/workspace
 
 # Ensure local bin is on PATH
 ENV PATH="/home/claude/.local/bin:${PATH}"

@@ -8,8 +8,7 @@ Simple containerized AI client environment for working with attached repositorie
 
 Before running the container:
 
-1. Create a `.ai_env` file in the project root
-2. Add the required variables, especially `ANTHROPIC_API_KEY`
+Add the required variable `ANTHROPIC_API_KEY`
 
 Example:
 
@@ -47,47 +46,46 @@ source ~/.zshrc
 ```text
 .
 ├── bin/
-│   ├── build      # build docker image
-│   └── run        # run container
-├── attach/        # place repositories here
-├── .ai_env        # environment variables
-└── README.md
+│   ├── build                # build image + initialize config
+│   └── run                  # run container
+├── workspace/               # place repositories and project files here
+├── templates/               # default template files
+├── claude_config/           # generated Claude runtime config
+├── .ai_env                  # generated project env file
+├── Dockerfile
 ```
 
 ---
 
 ## How to run
 
-### 1. Create `.ai_env`
-
-```bash
-echo "TEST=test" > .ai_env
-```
-
----
-
-### 2. Build the image
+### 1. Build the image and generate templates
 
 ```bash
 bin/build
 ```
 
-Builds the Docker image used by the AI client.
+This command will automatically:
 
+build the Docker image
+create .ai_env if it does not exist
+create claude_config/ if it does not exist
+
+You do not need to manually create these files.
 ---
 
-### 3. Add repositories
+### 2. Add repositories
 
 Put any repositories or project folders inside:
 
 ```text
-attach/
+workspace/
 ```
 
 Example:
 
 ```text
-attach/
+workspace/
 ├── repo-one/
 ├── repo-two/
 └── test-project/
@@ -96,7 +94,16 @@ attach/
 These repositories will be available inside the container.
 
 ---
+### 3. Add environment variables 
+The .ai_env file is used for project-specific environment variables only.
 
+Example:
+
+TEST=test
+APP_ENV=dev
+FEATURE_FLAG=true
+
+---
 ### 4. Run the container
 
 ```bash
@@ -110,8 +117,8 @@ This launches the AI client container with attached repositories and environment
 ## Typical workflow
 
 ```bash
-echo "TEST=test" > .ai_env
 bin/build
+echo "TEST=test" > .ai_env
 cp -r ~/my-project attach/
 bin/run
 ```
@@ -120,7 +127,7 @@ bin/run
 
 ## Notes
 
-* Keep `.ai_env` out of Git
-* Add `.ai_env` to `.gitignore`
-* Keep repositories inside `attach/`
-* Never commit API keys
+* `.ai_env` is for project variables only
+* `ANTHROPIC_API_KEY` should be exported in shell profile
+* `claude_config/`, `.ai_env`, and `workspace/*` are ignored by Git
+* Never commit API keys, secrets

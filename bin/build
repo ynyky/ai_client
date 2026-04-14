@@ -1,4 +1,15 @@
 #!/bin/bash
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PARENT_DIR="$(dirname "$SCRIPT_DIR")"
-docker build $PARENT_DIR -t ai-client:latest
+set -euo pipefail
+
+BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TPL="$BASE/templates/"
+CFG="$BASE/claude_config"
+
+mkdir -p "$CFG/.claude"
+
+cp -n "$TPL/claude_config/.claude/settings.json" "$CFG/.claude/settings.json"
+cp -n "$TPL/claude_config/.claude.json" "$CFG/.claude.json"
+cp -n "$TPL/.ai_env" "$BASE/.ai_env"
+
+chmod 700 -R claude_config/
+docker build "$BASE" -t ai-client:latest

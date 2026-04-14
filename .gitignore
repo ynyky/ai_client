@@ -2,5 +2,5 @@ workspace/*
 !workspace/CLAUDE.md
 !.keep
 
-.ai_env
-claude_config/
+/.ai_env
+/claude_config/

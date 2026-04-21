@@ -1,10 +1,15 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PARENT_DIR="$(dirname "$SCRIPT_DIR")"
 
+if [[ -n "$AI_CLIENT_WORKSPACE" ]]; then
+    :
+else
+    AI_CLIENT_WORKSPACE="$PARENT_DIR/workspace"
+fi
 docker run \
   -e ANTHROPIC_API_KEY \
   --env-file .ai_env \
-  -v "$PARENT_DIR/workspace:/home/claude/workspace" \
+  -v "$AI_CLIENT_WORKSPACE:/home/claude/workspace" \
   -v "$PARENT_DIR/claude_config/.claude:/home/claude/.claude" \
   -v "$PARENT_DIR/claude_config/.claude.json:/home/claude/.claude.json" \
   -it ai-client:latest

@@ -12,4 +12,4 @@ cp -n "$TPL/claude_config/.claude.json" "$CFG/.claude.json"
 cp -n "$TPL/.ai_env" "$BASE/.ai_env"
 
 chmod 700 -R claude_config/
-docker build "$BASE" -t ai-client:latest
+docker build "$BASE" --no-cache -t ai-client:latest

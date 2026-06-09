@@ -1,14 +1,32 @@
+#!/usr/bin/env bash
+
+set -e
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PARENT_DIR="$(dirname "$SCRIPT_DIR")"
 
-if [[ -n "$AI_CLIENT_WORKSPACE" ]]; then
-    :
-else
-    AI_CLIENT_WORKSPACE="$PARENT_DIR/workspace"
+CONTAINER_NAME="ai-client"
+
+if [[ -z "$AI_CLIENT_WORKSPACE" ]]; then
+    AI_CLIENT_WORKSPACE="$(pwd)"
 fi
+
+# Reset container if requested
+if [[ "$1" == "--init" ]]; then
+    docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
+fi
+
+# Reuse existing container
+if docker ps -a --format '{{.Names}}' | grep -Eq "^${CONTAINER_NAME}\$"; then
+    docker start -ai "$CONTAINER_NAME"
+    exit 0
+fi
+
+# Create new container
 docker run \
+  --name "$CONTAINER_NAME" \
   -e ANTHROPIC_API_KEY \
-  --env-file .ai_env \
+  --env-file "$PARENT_DIR/.ai_env" \
   -v "$AI_CLIENT_WORKSPACE:/home/claude/workspace" \
   -v "$PARENT_DIR/claude_config/.claude:/home/claude/.claude" \
   -v "$PARENT_DIR/claude_config/.claude.json:/home/claude/.claude.json" \

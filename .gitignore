@@ -3,4 +3,5 @@ workspace/*
 !.keep
 
 /.ai_env
+/.volumes
 /claude_config/

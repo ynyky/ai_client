@@ -10,6 +10,19 @@ CONTAINER_NAME="ai-client"
 if [[ -z "$AI_CLIENT_WORKSPACE" ]]; then
     AI_CLIENT_WORKSPACE="$(pwd)"
 fi
+# Build extra bind mounts from .volumes (one host path per line).
+# Each path is mounted under the workspace using its basename.
+VOLUME_ARGS=()
+VOLUMES_FILE="$PARENT_DIR/.volumes"
+if [[ -f "$VOLUMES_FILE" ]]; then
+    while IFS= read -r host_path || [[ -n "$host_path" ]]; do
+        # Skip blank lines and comments
+        [[ -z "$host_path" || "$host_path" == \#* ]] && continue
+        name="$(basename "$host_path")"
+        VOLUME_ARGS+=(-v "$host_path:/home/claude/workspace/$name")
+    done < "$VOLUMES_FILE"
+fi
+
 
 # Reset container if requested
 if [[ "$1" == "--init" ]]; then

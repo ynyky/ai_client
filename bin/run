@@ -43,4 +43,5 @@ docker run \
   -v "$AI_CLIENT_WORKSPACE:/home/claude/workspace" \
   -v "$PARENT_DIR/claude_config/.claude:/home/claude/.claude" \
   -v "$PARENT_DIR/claude_config/.claude.json:/home/claude/.claude.json" \
+  ${VOLUME_ARGS[@]+"${VOLUME_ARGS[@]}"} \
   -it ai-client:latest
